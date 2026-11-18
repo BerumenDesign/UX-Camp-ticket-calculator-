@@ -1,0 +1,6 @@
+{
+  // Static site: serve index.html and nothing else from the repo root.
+  "name": "ux-camp-ticket-calculator",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "." }
+}
