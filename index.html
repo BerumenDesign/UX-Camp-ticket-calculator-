@@ -40,11 +40,26 @@ button.add{margin-top:8px;color:var(--accent)}
 .tab[aria-selected=true]{background:var(--card);border-color:var(--line);color:var(--ink);font-weight:600}
 .tab.new{color:var(--accent)}
 .toolbar .sp{flex:1}
+.printonly{display:none}
+@media print{
+  :root{--bg:#fff;--card:#fff;--ink:#111;--mute:#555;--line:#ccc;--accent:#2f55d4;--pos:#1a8a4a;--neg:#c53a2e}
+  body{background:#fff}
+  .printonly{display:block;margin:0 0 12px;font-size:18px;font-weight:600}
+  #status,#locknote,.toolbar,.tabs,.sub,button.add,button.x,td:has(> button.x){display:none!important}
+  .grid{grid-template-columns:3fr 2fr}
+  .row b{white-space:nowrap}
+  .sticky{position:static}
+  input{border:0;padding:2px 0}
+  th[style*=width]{width:auto!important}
+  td:first-child input{min-width:9em}
+  .card,section{break-inside:avoid}
+}
 </style>
 </head>
 <body>
 <main>
   <h1>UX Camp Ticket Calculator</h1>
+  <h2 id="printname" class="printonly"></h2>
   <p class="sub">Change the inputs and the totals update as you type. Your changes save in this browser.</p>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div class="toolbar">
@@ -56,6 +71,7 @@ button.add{margin-top:8px;color:var(--accent)}
     <button id="save">Save scenarios to file</button>
     <button id="load">Load from file</button>
     <button id="export">Export CSV</button>
+    <button id="pdf">Export PDF</button>
     <input type="file" id="file" accept=".json,application/json" hidden>
   </div>
   <p class="note" id="status" role="status" style="margin:-8px 0 12px"></p>
@@ -345,6 +361,9 @@ document.addEventListener('input', e => {
   else if (el.id in s) s[el.id] = num(el.value);
   render();
 });
+window.addEventListener('beforeprint', () => {
+  $('printname').textContent = 'Scenario: ' + (store.scenarios[store.active].name || 'Untitled');
+});
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.tab) select(+b.dataset.tab);
@@ -370,6 +389,12 @@ document.addEventListener('click', e => {
     renderAll();
   } else if (b.id === 'reset' && !locked()) {
     armed(b, 'Click again to reset', () => { s = store.scenarios[store.active].data = structuredClone(NEW_DEFAULTS); renderAll(); });
+  }
+  else if (b.id === 'pdf') {
+    const prev = document.title;
+    document.title = `UX Camp - ${store.scenarios[store.active].name || 'Scenario'}`;
+    window.print();
+    document.title = prev;
   }
   else if (b.id === 'export') {
     const r = calc(), q = v => `"${String(v).replace(/"/g, '""')}"`;
