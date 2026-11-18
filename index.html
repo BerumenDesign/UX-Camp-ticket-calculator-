@@ -45,10 +45,13 @@ button.add{margin-top:8px;color:var(--accent)}
   :root{--bg:#fff;--card:#fff;--ink:#111;--mute:#555;--line:#ccc;--accent:#2f55d4;--pos:#1a8a4a;--neg:#c53a2e}
   body{background:#fff}
   .printonly{display:block;margin:0 0 12px;font-size:18px;font-weight:600}
-  .toolbar,.tabs,.sub,button.add,button.x,td:has(> button.x){display:none!important}
-  .grid{grid-template-columns:1fr 1fr}
+  #status,#locknote,.toolbar,.tabs,.sub,button.add,button.x,td:has(> button.x){display:none!important}
+  .grid{grid-template-columns:3fr 2fr}
+  .row b{white-space:nowrap}
   .sticky{position:static}
   input{border:0;padding:2px 0}
+  th[style*=width]{width:auto!important}
+  td:first-child input{min-width:9em}
   .card,section{break-inside:avoid}
 }
 </style>
